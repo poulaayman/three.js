@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عمارة 3D</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // إضافة ضوء للإضاءة
+        const light = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(light);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+        directionalLight.position.set(10, 10, 10);
+        scene.add(directionalLight);
+
+        // إنشاء العمارة
+        function createBuilding() {
+            const buildingGeometry = new THREE.BoxGeometry(6, 15, 4);
+            const buildingMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+            const building = new THREE.Mesh(buildingGeometry, buildingMaterial);
+            scene.add(building);
+
+            // إضافة البلكونات
+            for (let i = 1; i <= 5; i++) {
+                const balconyGeometry = new THREE.BoxGeometry(5, 0.2, 1);
+                const balconyMaterial = new THREE.MeshStandardMaterial({ color: 0x87ceeb });
+                const balcony = new THREE.Mesh(balconyGeometry, balconyMaterial);
+                balcony.position.y = i * 3 - 1;
+                balcony.position.z = 2.1;
+                scene.add(balcony);
+            }
+
+            // إضافة الشبابيك
+            for (let i = 1; i <= 5; i++) {
+                for (let j = -2; j <= 2; j += 2) {
+                    const windowGeometry = new THREE.BoxGeometry(1, 2, 0.1);
+                    const windowMaterial = new THREE.MeshStandardMaterial({ color: 0xffffff });
+                    const window = new THREE.Mesh(windowGeometry, windowMaterial);
+                    window.position.y = i * 3 - 1.5;
+                    window.position.x = j + 0.5;
+                    window.position.z = 1.9;
+                    scene.add(window);
+                }
+            }
+
+            // إضافة السلالم
+            const steps = [];
+            const stepHeight = 0.2;
+            const stepDepth = 0.5;
+            const stepWidth = 1;
+
+            for (let i = 0; i < 15; i++) {
+                const stepGeometry = new THREE.BoxGeometry(stepWidth, stepHeight, stepDepth);
+                const stepMaterial = new THREE.MeshStandardMaterial({ color: 0x8b4513 });
+                const step = new THREE.Mesh(stepGeometry, stepMaterial);
+                step.position.x = -4;
+                step.position.y = i * stepHeight * 1.5 - 7;
+                step.position.z = 0;
+                scene.add(step);
+                steps.push(step);
+            }
+        }
+
+        createBuilding();
+
+        camera.position.z = 20;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</body>
+</html>
